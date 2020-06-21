@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon interface</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+
+        <div class="row">
+          <p class="jumbotron">
+            Login : <input type="text" v-model="user" /> | Vous êtes connecté en
+            tant que {{user}}
+          </p>
+        </div>
+
+        <h1 class="display-4" v-if="shoppings.length > 0">
+          Produits commandés
+        </h1>
+        <div class="row">
+          <product-sheet
+            v-for="shopping in shoppings"
+            v-bind:name="shopping"
+            role="recap"
+          ></product-sheet>
+        </div>
+
+        <h1 v-bind:class="affichage">Produits disponibles</h1>
+        <div class="row">
+          <product-sheet
+            v-for="product in products"
+            v-bind:name="product"
+            v-on:order_passed="order"
+            role="order"
+          ></product-sheet>
+        </div>
+        
+      </div>
+    </div>
+
+    <script>
+      Vue.component("product-sheet", {
+        template: `
+        <div class="col-3">
+        <p class="jumbotron">{{name}}<br/>
+            <button class="btn btn-light" v-on:click="take_an_order(name)" v-if="role == 'order'">Commander</button>
+        </p>
+        </div>`,
+        props: ["name", "role"],
+        methods: {
+          take_an_order: function (product) {
+            this.$emit("order_passed", product);
+          },
+        },
+      });
+      var app = new Vue({
+        el: "#app",
+        data: {
+          user: "Benjamin",
+          products: ["Pizza", "Burger", "Frites", "Poke Bowl"],
+          shoppings: [],
+          affichage: "display-4",
+        },
+        methods: {
+          order: function (product) {
+            // console.log("ça marche !", product);
+            this.shoppings.push(product);
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
